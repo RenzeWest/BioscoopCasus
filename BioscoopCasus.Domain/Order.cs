@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.Design;
-using System.Numerics;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 
 namespace BioscoopCasus.Domain
@@ -14,7 +10,7 @@ namespace BioscoopCasus.Domain
         private const double PRICE_PREMIUM_TICKET = 3;
         private const double WEEKEND_GROUP_DISCOUNT_MODIFIER = 0.9;
 
-        private List<MovieTicket> _movieTickets = [];
+        private List<MovieTicket> _movieTickets = []; // This releation is 1..*, so the constructor should contain an MovieTicket
         private int _orderNr;
         private bool _isStudentOrder;
 
@@ -31,15 +27,14 @@ namespace BioscoopCasus.Domain
         public double CalculatePrice() 
         {
             double totalPrice = 0;
+            bool isWeekendScreening = _movieTickets[0].IsScreeningInWeekend();
 
-            // Because of the structure we have to do some of the ticket price calculation here. Feels like this breaks seperation of concerns.
-            // ELSE THIS COULD BE FIXED BY HAVING ACCESS TO THE SCREENING.
             if (_isStudentOrder) 
             {
                 for (int i = 0; i < _movieTickets.Count; i++)
                 {
                     // Second ticket is free
-                    if (i % 2 == 0) continue;
+                    if (!isWeekendScreening && i % 2 == 0) continue;
 
                     var ticket = _movieTickets[i];
                     totalPrice += ticket.GetPrice();
@@ -51,9 +46,6 @@ namespace BioscoopCasus.Domain
             {
                 for (int i = 0; i < _movieTickets.Count; i++)
                 {
-                    // TODO: Second ticket is free on weekdays
-                    // if (true) continue;
-
                     var ticket = _movieTickets[i];
                     totalPrice += ticket.GetPrice();
 
@@ -62,8 +54,7 @@ namespace BioscoopCasus.Domain
                 }
 
                 // If weekend, give a 10% discount for non students
-                // FOR NOW I WILL ASSUME THAT IT IS THE WEEKEND
-                if (_movieTickets.Count >= MINIMUM_TICKETS_FOR_GROUP_DISCOUNT) totalPrice *= WEEKEND_GROUP_DISCOUNT_MODIFIER;
+                if (isWeekendScreening && _movieTickets.Count >= MINIMUM_TICKETS_FOR_GROUP_DISCOUNT) totalPrice *= WEEKEND_GROUP_DISCOUNT_MODIFIER;
             }
 
             return totalPrice;
@@ -76,12 +67,13 @@ namespace BioscoopCasus.Domain
             {
                 case TicketExportFormat.PLAINTEXT:
                     StringBuilder sb = new("");
+                    sb.AppendLine($"Total price: {CalculatePrice()}");
                     foreach(MovieTicket ticket in _movieTickets) sb.AppendLine(ticket.ToString());
-                    File.WriteAllText($"C:/Downloads/{identifier}.txt", sb.ToString());
+                    File.WriteAllText($"C:\\dev\\{identifier}.txt", sb.ToString());
                     break;
                 case TicketExportFormat.JSON:
                     string json = JsonSerializer.Serialize(_movieTickets);
-                    File.WriteAllText($"C:/Downloads/{identifier}.json", json);
+                    File.WriteAllText($"C:\\dev\\{identifier}.json", json);
                     break;
                 default:
                     throw new NotImplementedException();
