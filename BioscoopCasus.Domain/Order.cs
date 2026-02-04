@@ -11,6 +11,7 @@ namespace BioscoopCasus.Domain
         private const double WEEKEND_GROUP_DISCOUNT_MODIFIER = 0.9;
 
         private List<MovieTicket> _movieTickets = []; // This releation is 1..*, so the constructor should contain an MovieTicket
+        private static StringBuilder _receiptBuilder = new StringBuilder("------------- Order -------------\n");
         private int _orderNr;
         private bool _isStudentOrder;
 
@@ -33,43 +34,64 @@ namespace BioscoopCasus.Domain
             {
                 for (int i = 0; i < _movieTickets.Count; i++)
                 {
-                    // Second ticket is free
-                    if (!isWeekendScreening && i % 2 == 0) continue;
-
                     var ticket = _movieTickets[i];
+
+                    // Second ticket is free
+                    if ((i + 1) % 2 == 0)
+                    {
+                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: FREE");
+                        continue;
+                    };
+
                     totalPrice += ticket.GetPrice();
 
                     // Check to add premium
-                    if (ticket.IsPremiumTicket()) totalPrice += PRICE_PREMIUM_TICKET_STUDENT;
+                    if (ticket.IsPremiumTicket())
+                    {
+                        totalPrice += PRICE_PREMIUM_TICKET_STUDENT;
+                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: {ticket.GetPrice() + PRICE_PREMIUM_TICKET_STUDENT}");
+                    }
+                    else _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: {ticket.GetPrice()}");
                 }
             } else
             {
                 for (int i = 0; i < _movieTickets.Count; i++)
                 {
                     var ticket = _movieTickets[i];
+
+                    if (!isWeekendScreening && (i + 1) % 2 == 0)
+                    {
+                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: FREE");
+                        continue;
+                    };
+
                     totalPrice += ticket.GetPrice();
 
                     // Check to add premium
-                    if (ticket.IsPremiumTicket()) totalPrice += PRICE_PREMIUM_TICKET;
+                    if (ticket.IsPremiumTicket())
+                    {
+                        totalPrice += PRICE_PREMIUM_TICKET;
+                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: {ticket.GetPrice() + PRICE_PREMIUM_TICKET_STUDENT}");
+                    }
                 }
 
                 // If weekend, give a 10% discount for non students
                 if (isWeekendScreening && _movieTickets.Count >= MINIMUM_TICKETS_FOR_GROUP_DISCOUNT) totalPrice *= WEEKEND_GROUP_DISCOUNT_MODIFIER;
             }
 
+            _receiptBuilder.AppendLine($"Total tickets: {_movieTickets.Count}");
+            _receiptBuilder.AppendLine($"Total price: {totalPrice}");
             return totalPrice;
         }
 
         public void Export(TicketExportFormat format)
         {
+            CalculatePrice();
             string identifier = $"movieTickets-{DateTime.Now:yyyyMMdd-HHmmss}";
             switch (format)
             {
                 case TicketExportFormat.PLAINTEXT:
-                    StringBuilder sb = new("");
-                    sb.AppendLine($"Total price: {CalculatePrice()}");
-                    foreach(MovieTicket ticket in _movieTickets) sb.AppendLine(ticket.ToString());
-                    File.WriteAllText($"C:\\dev\\{identifier}.txt", sb.ToString());
+                    File.WriteAllText($"C:\\dev\\{identifier}.txt", _receiptBuilder.ToString());
                     break;
                 case TicketExportFormat.JSON:
                     string json = JsonSerializer.Serialize(_movieTickets);
