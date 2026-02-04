@@ -91,11 +91,11 @@ namespace BioscoopCasus.Domain
             switch (format)
             {
                 case TicketExportFormat.PLAINTEXT:
-                    File.WriteAllText($"C:\\{identifier}.txt", _receiptBuilder.ToString());
+                    File.WriteAllText($"C:\\dev\\{identifier}.txt", _receiptBuilder.ToString());
                     break;
                 case TicketExportFormat.JSON:
                     string json = JsonSerializer.Serialize(_movieTickets);
-                    File.WriteAllText($"C:\\{identifier}.json", json);
+                    File.WriteAllText($"C:\\dev\\{identifier}.json", json);
                     break;
                 default:
                     throw new NotImplementedException();
