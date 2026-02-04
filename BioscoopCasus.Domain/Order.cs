@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace BioscoopCasus.Domain
 {
-    internal class Order
+    public class Order
     {
         private const int MINIMUM_TICKETS_FOR_GROUP_DISCOUNT = 6;
         private const double PRICE_PREMIUM_TICKET_STUDENT = 2;

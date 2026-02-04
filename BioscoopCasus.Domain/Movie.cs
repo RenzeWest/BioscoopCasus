@@ -1,6 +1,6 @@
 ﻿namespace BioscoopCasus.Domain
 {
-    internal class Movie
+    public class Movie
     {
         private List<MovieScreening> _movieScreenings = [];
         private readonly string _title;

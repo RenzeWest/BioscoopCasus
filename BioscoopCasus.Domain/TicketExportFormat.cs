@@ -1,6 +1,6 @@
 ﻿namespace BioscoopCasus.Domain
 {
-    internal enum TicketExportFormat
+    public enum TicketExportFormat
     {
         PLAINTEXT,
         JSON

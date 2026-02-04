@@ -1,6 +1,6 @@
 ﻿namespace BioscoopCasus.Domain
 {
-    internal class MovieTicket
+    public class MovieTicket
     {
         private static readonly DayOfWeek[] WEEK_DAYS = { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday };
         private MovieScreening _movieScreening { get; set; }
