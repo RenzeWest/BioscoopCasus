@@ -30,6 +30,7 @@ namespace BioscoopCasus.Domain
             double totalPrice = 0;
 
             if(_movieTickets.Count == 0) return totalPrice;
+
             bool isWeekendScreening = _movieTickets[0].IsScreeningInWeekend();
 
             if (_isStudentOrder) 

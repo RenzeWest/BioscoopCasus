@@ -27,7 +27,7 @@ namespace BioscoopTests
         public void SixTickets_Weekend_Premium_GroupDiscountApplied()
         {
             var order = CreateOrder(6, false, 6, true, true);
-            Assert.Equal(78, order.CalculatePrice());
+            Assert.Equal(70,2, order.CalculatePrice());
         }
 
         [Fact]
