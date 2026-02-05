@@ -12,8 +12,8 @@ namespace BioscoopTests
         private static MovieScreening CreateDummyScreening(bool isWeekend)
         {
             var movie = CreateDummyMovie();
-            DateTime date = isWeekend ? new DateTime(2026, 2, 7) : new DateTime(2026, 2, 3); // zaterdag vs woensdag
-            double price = 10; // standaard ticketprijs
+            DateTime date = isWeekend ? new DateTime(2026, 2, 7) : new DateTime(2026, 2, 3); 
+            double price = 10; 
             return new MovieScreening(movie, date, price);
         }
 

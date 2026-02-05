@@ -11,7 +11,7 @@ namespace BioscoopCasus.Domain
         private const double WEEKEND_GROUP_DISCOUNT_MODIFIER = 0.9;
 
         private List<MovieTicket> _movieTickets = []; // This releation is 1..*, so the constructor should contain an MovieTicket
-        private static StringBuilder _receiptBuilder = new StringBuilder("------------- Order -------------\n");
+        private StringBuilder _receiptBuilder = new StringBuilder("------------- Order -------------\n");
         private int _orderNr;
         private bool _isStudentOrder;
 
@@ -28,6 +28,8 @@ namespace BioscoopCasus.Domain
         public double CalculatePrice() 
         {
             double totalPrice = 0;
+
+            if(_movieTickets.Count == 0) return totalPrice;
             bool isWeekendScreening = _movieTickets[0].IsScreeningInWeekend();
 
             if (_isStudentOrder) 
@@ -71,7 +73,7 @@ namespace BioscoopCasus.Domain
                     if (ticket.IsPremiumTicket())
                     {
                         totalPrice += PRICE_PREMIUM_TICKET;
-                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: {ticket.GetPrice() + PRICE_PREMIUM_TICKET_STUDENT}");
+                        _receiptBuilder.AppendLine($"{ticket.ToString()} - Total Price: {ticket.GetPrice() + PRICE_PREMIUM_TICKET}");
                     }
                 }
 
